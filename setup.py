@@ -10,7 +10,7 @@ setup(
     description='A nice SDK for Mercado Libre',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/ernestomonroy/pymeli',
+    url='https://github.com/labrixdigital/pymeli',
     author='Ernesto Monroy',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -23,7 +23,7 @@ setup(
     packages=find_packages(include=['pymeli']),
     python_requires='>=3.5',
     project_urls={
-        'Bug Reports': 'https://github.com/ernestomonroy/pymeli/issues',
-        'Source': 'https://github.com/ernestomonroy/pymeli',
+        'Bug Reports': 'https://github.com/labrixdigital/pymeli/issues',
+        'Source': 'https://github.com/labrixdigital/pymeli',
     },
 )
