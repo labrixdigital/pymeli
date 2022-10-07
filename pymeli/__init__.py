@@ -1,1 +1,1 @@
-from pymeli import pymeli
+from pymeli.pymeli import *

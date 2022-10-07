@@ -40,10 +40,20 @@ def listing_types(**kwargs):
   resource='/sites/{site_id}/listing_types'.format(**kwargs)
  )
 
+def listing_type(**kwargs):
+ return _get(
+  resource='/sites/{site_id}/listing_types/{listing_type}'.format(**kwargs)
+ )
+
 def listing_prices(**kwargs):
+ parameters = {}
+ if 'price' in kwargs:
+  parameters['price'] = kwargs['price']
+ if 'category_id' in kwargs:
+  parameters['category_id'] = kwargs['category_id']
  return _get(
   resource='/sites/{site_id}/listing_prices'.format(**kwargs),
-  parameters={'price':kwargs['price']}
+  parameters=parameters
  )
 
 def categories(**kwargs):
@@ -116,8 +126,101 @@ def user_items(**kwargs):
 
  return results
 
-###############################################################################
+def publish_item(**kwargs):
+ response = _post(
+   headers = {'Content-Type':'application/json'},
+   resource = '/items',
+   data = kwargs['item']
+  )
+ return response
 
+def update_item(**kwargs):
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}'.format(**kwargs),
+   data = kwargs['updates']
+  )
+ return response
+
+def upload_item_description(**kwargs):
+ response = _post(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}/description'.format(**kwargs),
+   data = {'plain_text':kwargs['description']}
+  )
+ return response
+
+def update_item_description(**kwargs):
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}/description'.format(**kwargs),
+   data = {'plain_text':kwargs['description']}
+  )
+ return response
+
+def upload_image(**kwargs):
+ response = _post(
+   headers = {'multipart':'form-data'},
+   resource = '/pictures/items/upload',
+   image = kwargs['image']
+  )
+ return response
+
+def update_available_quantity(**kwargs):
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}'.format(**kwargs),
+   data = {'available_quantity':kwargs['available_quantity']}
+  )
+ return response
+
+def pause_item(**kwargs):
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}'.format(**kwargs),
+   data = {'status':'paused'}
+  )
+ return response
+
+def activate_item(**kwargs):
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}'.format(**kwargs),
+   data = {'status':'active'}
+  )
+ return response
+
+def set_free_shipping(**kwargs):
+ payload = {
+  "shipping": {
+        "mode": "me2",
+        "free_methods":
+        [
+            {
+                "id": 501245,
+                "rule":
+                {
+                    "default": True,
+                    "free_mode": "country",
+                    "free_shipping_flag": True,
+                    "value": None
+                }
+            }
+        ],
+        "local_pick_up": False,
+        "free_shipping": True,
+        "logistic_type": "drop_off"
+    }
+ }
+ response = _put(
+   headers = {'Content-Type':'application/json'},
+   resource='/items/{item_id}'.format(**kwargs),
+   data = payload
+  )
+ return response
+
+
+###############################################################################
 def _get_token():
  #Read file with token details
  with open('tokens/{}.json'.format(USER_NAME), 'r') as f:
@@ -148,3 +251,47 @@ def _get(**kwargs):
  response = requests.get(url=url, headers=headers, params=parameters)
  response.raise_for_status()
  return json.loads(response.text)
+
+def _post(**kwargs):
+ #Most basic request
+ request = {
+  'url': BASE_URL + kwargs['resource'],
+  'headers': _get_authorization_header()
+ }
+ #Enhance if additional headers
+ if 'headers' in kwargs:
+  request['headers'] = {**request['headers'], **kwargs['headers']}
+ #Enhance if data
+ if 'data' in kwargs:
+  request['data'] = json.dumps(kwargs['data'])
+ #Enhance if image
+ elif 'image' in kwargs:
+  from requests_toolbelt import MultipartEncoder
+  request['data'] = MultipartEncoder(
+   fields={'file': ('i.jpeg',kwargs['image'],'image/jpeg')})
+  request['headers'] = {
+   **request['headers'], 'Content-type': request['data'].content_type}
+ #Issue request
+ response = requests.post(**request)
+
+ return json.loads(response.text)
+
+def _put(**kwargs):
+ #Most basic request
+ request = {
+  'url': BASE_URL + kwargs['resource'],
+  'headers': _get_authorization_header()
+ }
+ #Enhance if additional headers
+ if 'headers' in kwargs:
+  request['headers'] = {**request['headers'], **kwargs['headers']}
+ #Enhance if data
+ if 'data' in kwargs:
+  request['data'] = json.dumps(kwargs['data'])
+ #Issue request
+ response = requests.put(**request)
+
+ return json.loads(response.text)
+
+
+
