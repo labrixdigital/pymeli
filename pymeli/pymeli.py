@@ -13,14 +13,14 @@ class Meli():
   if type(credentials) == str:
    with open(credentiasl, 'r') as f:
     self.credentials = json.load(f)
-   self.credentials = credentials
+  self.credentials = credentials
 
   if type(token) == str:
    with open(token, 'r') as f:
     self.token = json.load(f)
-   self.token = token
+  self.token = token
  
- def refresh_token():
+ def refresh_token(self):
   """Refresh the current token. It saves it in memory for future use and also
   returns an object containing the new token for persistent storage
   Return:
@@ -40,23 +40,23 @@ class Meli():
   response.raise_for_status()
   return json.loads(response.text)
  
- def me():
+ def me(self):
   return self._get(resource='/users/me')
 
- def sites():
+ def sites(self):
   return self._get(resource='/sites')
 
- def listing_types(**kwargs):
+ def listing_types(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/listing_types'.format(**kwargs)
   )
 
- def listing_type(**kwargs):
+ def listing_type(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/listing_types/{listing_type}'.format(**kwargs)
   )
 
- def listing_prices(**kwargs):
+ def listing_prices(self, **kwargs):
   parameters = {}
   if 'price' in kwargs:
    parameters['price'] = kwargs['price']
@@ -67,17 +67,17 @@ class Meli():
    parameters=parameters
   )
 
- def categories(**kwargs):
+ def categories(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/categories'.format(**kwargs)
   )
 
- def category(**kwargs):
+ def category(self, **kwargs):
   return self._get(
    resource='/categories/{category_id}'.format(**kwargs)
   )
 
- def category_search(**kwargs):
+ def category_search(self, **kwargs):
   #Check if searching for a query
   parameters = {'category':kwargs['category_id']}
   if 'query' in kwargs:
@@ -100,17 +100,17 @@ class Meli():
    )['results']
   return results
 
- def item(**kwargs):
+ def item(self, **kwargs):
   return self._get(
    resource='/items/{item_id}'.format(**kwargs)
   )
 
- def item_description(**kwargs):
+ def item_description(self, **kwargs):
   return self._get(
    resource='/items/{item_id}/description'.format(**kwargs)
   )
 
- def user_items(**kwargs):
+ def user_items(self, **kwargs):
   #If no user, then get the ID for me
   if 'user_id' not in kwargs:
    user_id = me()['id']
@@ -137,7 +137,7 @@ class Meli():
 
   return results
 
- def publish_item(**kwargs):
+ def publish_item(self, **kwargs):
   response = _post(
     headers = {'Content-Type':'application/json'},
     resource = '/items',
@@ -145,7 +145,7 @@ class Meli():
    )
   return response
 
- def update_item(**kwargs):
+ def update_item(self, **kwargs):
   response = _put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
@@ -153,7 +153,7 @@ class Meli():
    )
   return response
 
- def upload_item_description(**kwargs):
+ def upload_item_description(self, **kwargs):
   response = _post(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}/description'.format(**kwargs),
@@ -161,7 +161,7 @@ class Meli():
    )
   return response
 
- def update_item_description(**kwargs):
+ def update_item_description(self, **kwargs):
   response = _put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}/description'.format(**kwargs),
@@ -169,7 +169,7 @@ class Meli():
    )
   return response
 
- def upload_image(**kwargs):
+ def upload_image(self, **kwargs):
   response = _post(
     headers = {'multipart':'form-data'},
     resource = '/pictures/items/upload',
@@ -177,7 +177,7 @@ class Meli():
    )
   return response
 
- def update_available_quantity(**kwargs):
+ def update_available_quantity(self, **kwargs):
   response = _put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
@@ -185,7 +185,7 @@ class Meli():
    )
   return response
 
- def pause_item(**kwargs):
+ def pause_item(self, **kwargs):
   response = _put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
@@ -193,7 +193,7 @@ class Meli():
    )
   return response
 
- def activate_item(**kwargs):
+ def activate_item(self, **kwargs):
   response = _put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
@@ -201,7 +201,7 @@ class Meli():
    )
   return response
 
- def set_free_shipping(**kwargs):
+ def set_free_shipping(self, **kwargs):
   payload = {
    "shipping": {
          "mode": "me2",
@@ -232,12 +232,12 @@ class Meli():
  ##############################################################################
  ########### INTERNAL FUNCTIONS NOT TO BE IMPLEMENTED PUBLICALLY###############
  ##############################################################################
- def _get_authorization_header():
+ def _get_authorization_header(self):
   #Get token
   return {"Authorization": "Bearer {}".format(
    self.token['access_token'])}
 
- def _get(**kwargs):
+ def _get(self, **kwargs):
   headers = _get_authorization_header()
   url = 'https://api.mercadolibre.com' + kwargs['resource']
   if 'parameters' not in kwargs:
@@ -249,7 +249,7 @@ class Meli():
   response.raise_for_status()
   return json.loads(response.text)
 
- def _post(**kwargs):
+ def _post(self, **kwargs):
   #Most basic request
   request = {
    'url': 'https://api.mercadolibre.com' + kwargs['resource'],
@@ -273,7 +273,7 @@ class Meli():
   response.raise_for_status()
   return json.loads(response.text)
 
- def _put(**kwargs):
+ def _put(self, **kwargs):
   #Most basic request
   request = {
    'url': 'https://api.mercadolibre.com' + kwargs['resource'],
