@@ -8,3 +8,12 @@ A small module to try to help Mercado Libre (MeLi) developers and the MeLi commu
 * Convert to class
 * Automatic refresh of tokens
 * Standardise credentials file
+
+## Use
+
+```python
+from pymeli import Meli
+
+client = Meli(credentials='credentials.json', token='token.json')
+
+```

@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pymeli',
-    version='0.0.7',
+    version='0.1.0',
     description='A nice SDK for Mercado Libre',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -26,4 +26,5 @@ setup(
         'Bug Reports': 'https://github.com/labrixdigital/pymeli/issues',
         'Source': 'https://github.com/labrixdigital/pymeli',
     },
+    install_requires = ['requests']
 )
