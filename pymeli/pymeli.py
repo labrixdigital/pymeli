@@ -43,20 +43,20 @@ class Meli():
  def me(self):
   return self._get(resource='/users/me')
 
- def sites(self):
+ def list_sites(self):
   return self._get(resource='/sites')
 
- def listing_types(self, **kwargs):
+ def list_listing_types(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/listing_types'.format(**kwargs)
   )
 
- def listing_type(self, **kwargs):
+ def get_listing_type(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/listing_types/{listing_type}'.format(**kwargs)
   )
 
- def listing_prices(self, **kwargs):
+ def get_listing_prices(self, **kwargs):
   parameters = {}
   if 'price' in kwargs:
    parameters['price'] = kwargs['price']
@@ -67,17 +67,17 @@ class Meli():
    parameters=parameters
   )
 
- def categories(self, **kwargs):
+ def list_categories(self, **kwargs):
   return self._get(
    resource='/sites/{site_id}/categories'.format(**kwargs)
   )
 
- def category(self, **kwargs):
+ def get_category(self, **kwargs):
   return self._get(
    resource='/categories/{category_id}'.format(**kwargs)
   )
 
- def category_search(self, **kwargs):
+ def search_category(self, **kwargs):
   #Check if searching for a query
   parameters = {'category':kwargs['category_id']}
   if 'query' in kwargs:
@@ -100,17 +100,17 @@ class Meli():
    )['results']
   return results
 
- def item(self, **kwargs):
+ def get_item(self, **kwargs):
   return self._get(
    resource='/items/{item_id}'.format(**kwargs)
   )
 
- def item_description(self, **kwargs):
+ def get_item_description(self, **kwargs):
   return self._get(
    resource='/items/{item_id}/description'.format(**kwargs)
   )
 
- def user_items(self, **kwargs):
+ def list_user_items(self, **kwargs):
   #If no user, then get the ID for me
   if 'user_id' not in kwargs:
    user_id = me()['id']
