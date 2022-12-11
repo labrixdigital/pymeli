@@ -238,7 +238,7 @@ class Meli():
    self.token['access_token'])}
 
  def _get(self, **kwargs):
-  headers = _get_authorization_header()
+  headers = self._get_authorization_header()
   url = 'https://api.mercadolibre.com' + kwargs['resource']
   if 'parameters' not in kwargs:
    parameters = {}
@@ -253,7 +253,7 @@ class Meli():
   #Most basic request
   request = {
    'url': 'https://api.mercadolibre.com' + kwargs['resource'],
-   'headers': _get_authorization_header()
+   'headers': self._get_authorization_header()
   }
   #Enhance if additional headers
   if 'headers' in kwargs:
@@ -277,7 +277,7 @@ class Meli():
   #Most basic request
   request = {
    'url': 'https://api.mercadolibre.com' + kwargs['resource'],
-   'headers': _get_authorization_header()
+   'headers': self._get_authorization_header()
   }
   #Enhance if additional headers
   if 'headers' in kwargs:
