@@ -36,8 +36,8 @@ class Meli():
   url = 'https://api.mercadolibre.com/oauth/token'
   data = {
    'grant_type':'authorization_code',
-   'client_id':self.credentials['client_id'],
-   'client_secret':self.credentials['client_secret'],
+   'client_id':self.client_id,
+   'client_secret':self.client_secret,
    'code':code,
    'redirect_uri':redirect_uri
   }
@@ -57,8 +57,8 @@ class Meli():
   url = 'https://api.mercadolibre.com/oauth/token'
   data = {
    'grant_type':'refresh_token',
-   'client_id':self.credentials['client_id'],
-   'client_secret':self.credentials['client_secret'],
+   'client_id':self.client_id,
+   'client_secret':self.client_secret,
    'refresh_token':self.refresh_token
   }
   response = requests.post(
