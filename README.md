@@ -14,6 +14,6 @@ A small module to try to help Mercado Libre (MeLi) developers and the MeLi commu
 ```python
 from pymeli import Meli
 
-client = Meli(credentials='credentials.json', token='token.json')
+client = Meli(client_id='****', client_secret='***')
 
 ```

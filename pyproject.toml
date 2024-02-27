@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymeli"
+authors = [
+    {name = "Ernesto Monroy"},
+]
+version = "0.2.1"
+description = "A nice SDK for Mercado Libre"
+readme = "README.md"
+requires-python = ">=3.5"
+keywords = ["meli","mercado libre","sdk"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Development Status :: 3 - Alpha",
+    "Topic :: Utilities"
+]
+dependencies = ["requests"]
+license = {file = "LICENSE"}
+
+[project.urls]
+"Homepage" = "https://github.com/labrixdigital/pymeli"
+"Bug Tracker" = "https://github.com/labrixdigital/pymeli/issues"
+
+[tool.setuptools.packages.find]
+exclude = ["test*"]

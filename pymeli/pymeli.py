@@ -2,24 +2,52 @@ import json
 import requests
 
 class Meli():
- def __init__(self, *, credentials, token):
-  """Constructor for Meli class
-  Parameters:
-  - credentials: The file where your client (application) credentials are
-   stored or the dictionary containing them (client_id and client_secret)
-  - token: The file where the token from the user grant is stored or a dictionary
-   containing the access_token and refresh_token
+ def __init__(self, **kwargs):
+  """Constructor for Meli class. The arguments can be passed as keywords
+  Keyword arguments:
+  - client_id: The Client ID of your MELI application
+  - client_secret: The secret of your MELI application
+  - access_token: Access token for user you are working with (optional)
+  - refresh_token: Refresh token for user you are working with (optional)
   """
-  if type(credentials) == str:
-   with open(credentiasl, 'r') as f:
-    self.credentials = json.load(f)
-  self.credentials = credentials
-
-  if type(token) == str:
-   with open(token, 'r') as f:
-    self.token = json.load(f)
-  self.token = token
+  if 'client_id' in kwargs:
+   self.client_id = kwargs['client_id']
+  else:
+   raise ValueError('client_id is required')
+  if 'client_secret' in kwargs:
+   self.client_secret = kwargs['client_secret']
+  else:
+   raise ValueError('client_secret is required')
+  self.access_token = None
+  self.refresh_token = None
+  if 'access_token' in kwargs:
+   self.access_token = kwargs['access_token']
+  if 'refresh_token' in kwargs:
+   self.refresh_token = kwargs['refresh_token']
  
+ def exchange_code_for_token(self, code, redirect_uri):
+  """Exchange the code for a token
+  Parameters:
+  - code: The code obtained from the user grant
+  - redirect_uri: The redirect_uri used in the user grant
+  Return:
+  - token: A dictionary containing the access_token and refresh_token
+  """
+  url = 'https://api.mercadolibre.com/oauth/token'
+  data = {
+   'grant_type':'authorization_code',
+   'client_id':self.credentials['client_id'],
+   'client_secret':self.credentials['client_secret'],
+   'code':code,
+   'redirect_uri':redirect_uri
+  }
+  response = requests.post(
+   url=url,
+   data=data
+  )
+  response.raise_for_status()
+  return json.loads(response.text)
+
  def refresh_token(self):
   """Refresh the current token. It saves it in memory for future use and also
   returns an object containing the new token for persistent storage
@@ -31,7 +59,7 @@ class Meli():
    'grant_type':'refresh_token',
    'client_id':self.credentials['client_id'],
    'client_secret':self.credentials['client_secret'],
-   'refresh_token':self.token['refresh_token']
+   'refresh_token':self.refresh_token
   }
   response = requests.post(
    url=url,
@@ -113,7 +141,7 @@ class Meli():
  def list_user_items(self, **kwargs):
   #If no user, then get the ID for me
   if 'user_id' not in kwargs:
-   user_id = me()['id']
+   user_id = self.me()['id']
   else:
    user_id = kwargs['user_id']
 
@@ -138,7 +166,7 @@ class Meli():
   return results
 
  def publish_item(self, **kwargs):
-  response = _post(
+  response = self._post(
     headers = {'Content-Type':'application/json'},
     resource = '/items',
     data = kwargs['item']
@@ -146,7 +174,7 @@ class Meli():
   return response
 
  def update_item(self, **kwargs):
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = kwargs['updates']
@@ -154,7 +182,7 @@ class Meli():
   return response
 
  def upload_item_description(self, **kwargs):
-  response = _post(
+  response = self._post(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}/description'.format(**kwargs),
     data = {'plain_text':kwargs['description']}
@@ -162,7 +190,7 @@ class Meli():
   return response
 
  def update_item_description(self, **kwargs):
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}/description'.format(**kwargs),
     data = {'plain_text':kwargs['description']}
@@ -170,7 +198,7 @@ class Meli():
   return response
 
  def upload_image(self, **kwargs):
-  response = _post(
+  response = self._post(
     headers = {'multipart':'form-data'},
     resource = '/pictures/items/upload',
     image = kwargs['image']
@@ -178,7 +206,7 @@ class Meli():
   return response
 
  def update_available_quantity(self, **kwargs):
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = {'available_quantity':kwargs['available_quantity']}
@@ -186,7 +214,7 @@ class Meli():
   return response
 
  def pause_item(self, **kwargs):
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = {'status':'paused'}
@@ -194,7 +222,7 @@ class Meli():
   return response
 
  def activate_item(self, **kwargs):
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = {'status':'active'}
@@ -223,7 +251,7 @@ class Meli():
          "logistic_type": "drop_off"
      }
   }
-  response = _put(
+  response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = payload
@@ -235,7 +263,7 @@ class Meli():
  def _get_authorization_header(self):
   #Get token
   return {"Authorization": "Bearer {}".format(
-   self.token['access_token'])}
+   self.access_token)}
 
  def _get(self, **kwargs):
   headers = self._get_authorization_header()
