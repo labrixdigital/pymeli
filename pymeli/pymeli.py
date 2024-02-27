@@ -45,7 +45,8 @@ class Meli():
    url=url,
    data=data
   )
-  response.raise_for_status()
+  if response.status_code != 200:
+   raise requests.exceptions.HTTPError(response.text)
   return json.loads(response.text)
 
  def refresh_token(self):
