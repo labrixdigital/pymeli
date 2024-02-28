@@ -234,6 +234,14 @@ class Meli():
    )
   return response
 
+ def delete_item(self, **kwargs):
+  response = self._put(
+    headers = {'Content-Type':'application/json'},
+    resource='/items/{item_id}'.format(**kwargs),
+    data = {'deleted':'true'}
+   )
+  return response
+
  def set_free_shipping(self, **kwargs):
   payload = {
    "shipping": {
