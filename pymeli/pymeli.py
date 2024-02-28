@@ -20,11 +20,12 @@ class Meli():
    raise ValueError('client_secret is required')
   self.__access_token = None
   self.__refresh_token = None
-  if 'access_token' in kwargs:
+  if 'access_token' in kwargs and 'refresh_token' in kwargs:
    self.__access_token = kwargs['access_token']
-  if 'refresh_token' in kwargs:
    self.__refresh_token = kwargs['refresh_token']
- 
+  elif 'access_token' in kwargs or 'refresh_token' in kwargs:
+   raise ValueError('Both access_token and refresh_token are required')
+  
  def exchange_code_for_token(self, code, redirect_uri):
   """Exchange the code for a token
   Parameters:
@@ -67,7 +68,10 @@ class Meli():
    data=data
   )
   response.raise_for_status()
-  return json.loads(response.text)
+  credentials = json.loads(response.text)
+  self.__access_token = credentials['access_token']
+  self.__refresh_token = credentials['refresh_token']
+  return credentials
  
  def me(self):
   return self._get(resource='/users/me')
