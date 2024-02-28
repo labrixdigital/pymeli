@@ -11,19 +11,19 @@ class Meli():
   - refresh_token: Refresh token for user you are working with (optional)
   """
   if 'client_id' in kwargs:
-   self.client_id = kwargs['client_id']
+   self.__client_id = kwargs['client_id']
   else:
    raise ValueError('client_id is required')
   if 'client_secret' in kwargs:
-   self.client_secret = kwargs['client_secret']
+   self.__client_secret = kwargs['client_secret']
   else:
    raise ValueError('client_secret is required')
-  self.access_token = None
-  self.refresh_token = None
+  self.__access_token = None
+  self.__refresh_token = None
   if 'access_token' in kwargs:
-   self.access_token = kwargs['access_token']
+   self.__access_token = kwargs['access_token']
   if 'refresh_token' in kwargs:
-   self.refresh_token = kwargs['refresh_token']
+   self.__refresh_token = kwargs['refresh_token']
  
  def exchange_code_for_token(self, code, redirect_uri):
   """Exchange the code for a token
@@ -36,8 +36,8 @@ class Meli():
   url = 'https://api.mercadolibre.com/oauth/token'
   data = {
    'grant_type':'authorization_code',
-   'client_id':self.client_id,
-   'client_secret':self.client_secret,
+   'client_id':self.__client_id,
+   'client_secret':self.__client_secret,
    'code':code,
    'redirect_uri':redirect_uri
   }
@@ -58,9 +58,9 @@ class Meli():
   url = 'https://api.mercadolibre.com/oauth/token'
   data = {
    'grant_type':'refresh_token',
-   'client_id':self.client_id,
-   'client_secret':self.client_secret,
-   'refresh_token':self.refresh_token
+   'client_id':self.__client_id,
+   'client_secret':self.__client_secret,
+   'refresh_token':self.__refresh_token
   }
   response = requests.post(
    url=url,
@@ -264,7 +264,7 @@ class Meli():
  def _get_authorization_header(self):
   #Get token
   return {"Authorization": "Bearer {}".format(
-   self.access_token)}
+   self.__access_token)}
 
  def _get(self, **kwargs):
   headers = self._get_authorization_header()
