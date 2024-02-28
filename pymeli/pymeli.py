@@ -234,12 +234,20 @@ class Meli():
    )
   return response
 
+ def close_item(self, **kwargs):
+  response = self._put(
+    headers = {'Content-Type':'application/json'},
+    resource='/items/{item_id}'.format(**kwargs),
+    data = {'status':'closed'}
+  )
+  return response
+
  def delete_item(self, **kwargs):
   response = self._put(
     headers = {'Content-Type':'application/json'},
     resource='/items/{item_id}'.format(**kwargs),
     data = {'deleted':'true'}
-   )
+  )
   return response
 
  def set_free_shipping(self, **kwargs):
@@ -287,7 +295,8 @@ class Meli():
    parameters = kwargs['parameters']
   #Issue request
   response = requests.get(url=url, headers=headers, params=parameters)
-  response.raise_for_status()
+  if response.status_code != 200:
+   raise requests.exceptions.HTTPError(response.text)
   return json.loads(response.text)
 
  def _post(self, **kwargs):
@@ -311,7 +320,8 @@ class Meli():
     **request['headers'], 'Content-type': request['data'].content_type}
   #Issue request
   response = requests.post(**request)
-  response.raise_for_status()
+  if response.status_code != 200:
+   raise requests.exceptions.HTTPError(response.text)
   return json.loads(response.text)
 
  def _put(self, **kwargs):
@@ -328,7 +338,8 @@ class Meli():
    request['data'] = json.dumps(kwargs['data'])
   #Issue request
   response = requests.put(**request)
-  response.raise_for_status()
+  if response.status_code != 200:
+   raise requests.exceptions.HTTPError(response.text)
   return json.loads(response.text)
 
 
