@@ -320,7 +320,7 @@ class Meli():
     **request['headers'], 'Content-type': request['data'].content_type}
   #Issue request
   response = requests.post(**request)
-  if response.status_code != 200:
+  if response.status_code not in [200,201]:
    raise requests.exceptions.HTTPError(response.text)
   return json.loads(response.text)
 
