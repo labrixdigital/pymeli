@@ -7,7 +7,7 @@ name = "pymeli"
 authors = [
     {name = "Ernesto Monroy"},
 ]
-version = "0.2.6"
+version = "0.2.7"
 description = "A nice SDK for Mercado Libre"
 readme = "README.md"
 requires-python = ">=3.5"
@@ -20,7 +20,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Topic :: Utilities"
 ]
-dependencies = ["requests"]
+dependencies = ["requests","requests_toolbelt"]
 license = {file = "LICENSE"}
 
 [project.urls]
